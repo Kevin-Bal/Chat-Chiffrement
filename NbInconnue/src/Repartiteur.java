@@ -1,18 +1,17 @@
 import java.net.*;
 import java.io.*;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 
 
 public class Repartiteur extends ServerSocket {
-    private final static int port = 12000; // Port d'écoute
+    private final static int PORT = 12000; // Port d'écoute
+
     private List<Socket> clients = new ArrayList<>();
 
     public Repartiteur() throws IOException {
-        super(port);
-        System.out.println("[Serveur]: Serveur Chatroom chiffrée lancée sur " + (port));
+    	super(PORT);
+        System.out.println("[Serveur] Serveur Chatroom chiffrée lancée sur " + PORT);
     }
 
     /**
@@ -20,13 +19,15 @@ public class Repartiteur extends ServerSocket {
      * @throws IOException
      */
     public void execute() throws IOException {
-        Socket maConnection;
-        while (true) {
-            System.out.println("[Serveur]: En attente de connexion");
-            maConnection = accept();
-            clients.add(maConnection);
+        Socket maConnexion;
+        System.out.println("[Serveur] En attente de connexion");
 
-            new Thread(new ServiceClient(maConnection, clients)).start();
+        while (true) {
+            maConnexion = accept();
+            clients.add(maConnexion);
+
+            new Thread(new ServiceClient(maConnexion, clients)).start();
+            System.out.println("[Serveur] En attente de connexion");
         }
     }
 
@@ -36,8 +37,12 @@ public class Repartiteur extends ServerSocket {
      * @throws IOException
      */
     public static void main(String[] args) throws IOException {
-        Repartiteur connectionManager = new Repartiteur();
-        connectionManager.execute();
+        Repartiteur connexionManager = new Repartiteur();
+        try {
+        	connexionManager.execute();
+	    } catch (IOException e) {
+			e.printStackTrace();
+		}
     }
 
 }
