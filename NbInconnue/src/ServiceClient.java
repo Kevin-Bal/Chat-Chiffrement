@@ -21,11 +21,14 @@ public class ServiceClient implements Runnable {
      * @param la_connection
      * @param clients
      */
-    public ServiceClient(Socket la_connection, ArrayList<Socket> clients){
+    public ServiceClient(Socket la_connection, List<Socket> clients){
         this.ma_connection= la_connection;
         this.clients = clients;
     }
 
+    /**
+     * Méthode de gestion de déconnexion du client
+     */
     private void terminer(){
         try{
             if (ma_connection != null) {
@@ -40,6 +43,9 @@ public class ServiceClient implements Runnable {
         return;
     }
 
+    /**
+     * Méthode de gestion de la réception et de l'envoie des messages
+     */
     public  void run(){
         // Phase d'initialisation
         BufferedReader flux_entrant = null;
@@ -91,10 +97,8 @@ public class ServiceClient implements Runnable {
 
             switch(message_lu){
                 case HELP :
-                    maSortie.println("--> Principe :");
-                    maSortie.println("-> Vous disposez de trois éssaies pour trouver le nombre inconnue.");
-                    maSortie.println("-> Le nombre inconnu est compris entre 1 et 1 000 000.");
-                    maSortie.println("--> Toutes les commandes sont répertoriées ici :");
+                    maSortie.println("--> Wiki des commandes :");
+                    maSortie.println("--> "+QUITTER+" : permet de vous déconnecter du serveur.");
                     break;
 
                 case QUITTER :
@@ -109,6 +113,10 @@ public class ServiceClient implements Runnable {
         }
     }
 
+    /**
+     * Méthode qui se charge de notifier tous les clients présent dans le serveur
+     * @param message_lu
+     */
     public void notifyAllClient(String message_lu) {
         try {
             for (Socket client : clients ) {

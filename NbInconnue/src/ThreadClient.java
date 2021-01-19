@@ -28,6 +28,9 @@ public class ThreadClient {
         }
     }
 
+    /**
+     * Fonction d'envoie de message géré par un thread
+     */
     public void envoie() {
         Thread envoyer = new Thread(new Runnable() {
             String msg;
@@ -44,6 +47,9 @@ public class ThreadClient {
         envoyer.start();
     }
 
+    /**
+     * Gestion de la réception de message, plus affichage
+     */
     public void reception() {
         Thread recevoir = new Thread(new Runnable() {
             String msg;
@@ -68,14 +74,20 @@ public class ThreadClient {
         recevoir.start();
     }
 
+    /**
+     * Fonction run du thread client
+     */
     public void run(){
         envoie();
         reception();
     }
 
+    /**
+     * Méthode de saisie de message du client
+     * @return message
+     */
     public static String saisieMessage(){
         Scanner sc = new Scanner(System.in);
-
         return sc.nextLine();
     }
 }
