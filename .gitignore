@@ -39,5 +39,6 @@ local.properties
 .loadpath
 
 # IntelliJ files
-
-
+.iml
+.idea
+out/

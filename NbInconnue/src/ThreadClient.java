@@ -12,11 +12,11 @@ public class ThreadClient {
     private String id;
     private BufferedReader mon_entree = null;
     private PrintWriter ma_sortie = null;
-    private  Socket la_connection = null;
+    private Socket la_connection = null;
     private static final String FIN_CONNECTION = "Fermeture de la connexion";
     private static final String FIN_CLIENT = "end";
 
-    public ThreadClient( String monId) throws IOException {
+    public ThreadClient(String monId) throws IOException {
         this.id = monId;
         try {
             la_connection = new Socket(serveurIp, serveurPort);
@@ -27,8 +27,6 @@ public class ThreadClient {
 
         }
     }
-
-
 
     public void envoie() {
         Thread envoyer = new Thread(new Runnable() {
@@ -41,7 +39,6 @@ public class ThreadClient {
                     ma_sortie.println(msg);
                     ma_sortie.flush();
                 }
-
             }
         });
         envoyer.start();
