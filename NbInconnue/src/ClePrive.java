@@ -4,12 +4,14 @@ public class ClePrive {
     // Rajouter un Id CLient
     private BigInteger u;
     private BigInteger e;
+    private BigInteger n;
     private BigInteger m;
     private BigInteger v;
 
-    public ClePrive(BigInteger e, BigInteger m){
+    public ClePrive(BigInteger e, BigInteger m, BigInteger n){
         this.e = e;
         this.m = m;
+        this.n = n;
         euclideEtendu(e,m);
     }
 
@@ -17,6 +19,7 @@ public class ClePrive {
      * Intégration de l'algorithme d'Euclide étendu
      */
     public void euclideEtendu(BigInteger a, BigInteger b){
+        System.out.println();
         BigInteger rprec = a;
         BigInteger uprec = BigInteger.valueOf(1);
         BigInteger vprec = BigInteger.valueOf(0);

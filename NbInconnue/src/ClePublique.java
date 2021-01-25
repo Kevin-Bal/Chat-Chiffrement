@@ -24,7 +24,6 @@ public class ClePublique {
         // petit entier impair
         do{
             e = BigInteger.valueOf(Math.abs(new Random().nextInt()));
-            System.out.println(e + "          "+ e.gcd(m));
         }while(!e.gcd(m).equals(BigInteger.valueOf(1)));
     }
 
@@ -33,6 +32,30 @@ public class ClePublique {
         cp[0] = n;
         cp[1] = e;
         return cp;
+    }
+
+    public BigInteger getM() {
+        return m;
+    }
+
+    public void setM(BigInteger m) {
+        this.m = m;
+    }
+
+    public BigInteger getE() {
+        return e;
+    }
+
+    public void setE(BigInteger e) {
+        this.e = e;
+    }
+
+    public BigInteger getN() {
+        return n;
+    }
+
+    public void setN(BigInteger n) {
+        this.n = n;
     }
 }
 
