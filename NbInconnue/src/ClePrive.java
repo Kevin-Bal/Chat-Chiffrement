@@ -27,11 +27,14 @@ public class ClePrive {
 
         int i = 2;
 
-        while(!r.equals(0)){
+        while(true){
             r = rprec.subtract(rprec.divide(r)).multiply(r);
             u = uprec.subtract(rprec.divide(r)).multiply(u);
             v = vprec.subtract(rprec.divide(r)).multiply(v);
 
+            if(rprec.equals(a.gcd(b)) && r.equals(BigInteger.valueOf(0))){
+                break;
+            }
             rprec = r;
             uprec = u;
             vprec = v;
