@@ -42,3 +42,4 @@ local.properties
 .iml
 .idea
 out/
+/bin/
