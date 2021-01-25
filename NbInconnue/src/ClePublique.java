@@ -24,12 +24,8 @@ public class ClePublique {
         // petit entier impair
         do{
             e = BigInteger.valueOf(Math.abs(new Random().nextInt()));
-            System.out.println(e);
-        }while(BigInteger.valueOf(0).equals(e.divideAndRemainder(BigInteger.valueOf(2))[1]) || !sontPremiersEntreEux(e,m));
-    }
-
-    public boolean sontPremiersEntreEux(BigInteger e,BigInteger m){
-        return e.gcd(m).equals(1);
+            System.out.println(e + "          "+ e.gcd(m));
+        }while(!e.gcd(m).equals(BigInteger.valueOf(1)));
     }
 
     public BigInteger[] clePublique(){
