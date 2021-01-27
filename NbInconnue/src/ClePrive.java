@@ -19,31 +19,54 @@ public class ClePrive {
      * Intégration de l'algorithme d'Euclide étendu
      */
     public void euclideEtendu(BigInteger a, BigInteger b){
-        System.out.println();
-        BigInteger rprec = a;
-        BigInteger uprec = BigInteger.valueOf(1);
-        BigInteger vprec = BigInteger.valueOf(0);
+        System.out.println("Euclide étendu :  a = "+a+" b = "+b);
 
-        BigInteger r = b;
-        u = BigInteger.valueOf(0);
-        v = BigInteger.valueOf(1);
+        BigInteger r1 = a;
+        BigInteger r2 = b;
 
-        int i = 2;
+        BigInteger u1 = BigInteger.valueOf(1);
+        BigInteger v1 = BigInteger.valueOf(0);
 
-        while(true){
-            r = rprec.subtract(rprec.divide(r)).multiply(r);
-            u = uprec.subtract(rprec.divide(r)).multiply(u);
-            v = vprec.subtract(rprec.divide(r)).multiply(v);
+        BigInteger u2 = BigInteger.valueOf(0);
+        BigInteger v2 = BigInteger.valueOf(1);
 
-            if(rprec.equals(a.gcd(b)) && r.equals(BigInteger.valueOf(0))){
-                break;
-            }
-            rprec = r;
-            uprec = u;
-            vprec = v;
+        BigInteger q;
+        BigInteger r3;
+        BigInteger u3;
+        BigInteger v3;
 
-            i++;
+        while(!r2.equals(BigInteger.valueOf(0))){
+
+            q = r1.divide(r2);
+
+            r3 = r1;
+            u3 = u1;
+            v3 = v1;
+            r1 = r2;
+            u1 = u2;
+            v1 = v2;
+
+            r2 = r3.subtract(q.multiply(r2));
+            u2 = u3.subtract(q.multiply(u2));
+            v2 = v3.subtract(q.multiply(v2));
+
+            /*if(BigInteger.ZERO.min(u2).equals(u2) || m.max(u2).equals(u2)){
+                System.out.println("Calcul du k pour changer u ");
+                BigInteger k = BigInteger.valueOf(-1);
+                u2 = u2.subtract(k.multiply(m));
+                while(BigInteger.valueOf(0).min(u2).equals(u2) || m.max(u2).equals(u2)){
+                    k = k.subtract(BigInteger.ONE);
+                    u2 = u2.subtract(k.multiply(m));
+                }
+            }*/
+
+            System.out.println("r2 : " + r2);
+            System.out.println("u2 : " + u2);
+            System.out.println("v2 : " + v2);
         }
+
+        u = u2;
+
     }
 
     ///////////GETTER ET SETTER////////////
