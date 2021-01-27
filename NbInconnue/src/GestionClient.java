@@ -1,4 +1,5 @@
 import java.io.IOException;
+import java.math.BigInteger;
 
 public class GestionClient {
 
@@ -10,15 +11,15 @@ public class GestionClient {
     public static void main(String[] args) throws IOException {
         String monId = String.format( args[0]);
         ClePublique cp = new ClePublique();
-        //ClePrive clePrive = new ClePrive(cp.getE(), cp.getM(), cp.getN());
-
         System.out.println("Cle publique : "+cp.clePublique()[0]+"    "+cp.clePublique()[1]);
-        //System.out.println(clePrive.getU());
 
-        /*
+        ClePrive clePrive = new ClePrive(BigInteger.valueOf(7), BigInteger.valueOf(4992), cp.getN());
+        System.out.println(clePrive.getU());
+
+/*
         ThreadClient currrentClient = new ThreadClient(monId);
         currrentClient.run();
-         */
+*/
 
     }
 

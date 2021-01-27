@@ -19,25 +19,36 @@ public class ClePrive {
      * Intégration de l'algorithme d'Euclide étendu
      */
     public void euclideEtendu(BigInteger a, BigInteger b){
-        System.out.println();
+        System.out.println("Euclide étendu :  a = "+a+" b = "+b);
+
         BigInteger rprec = a;
         BigInteger uprec = BigInteger.valueOf(1);
         BigInteger vprec = BigInteger.valueOf(0);
+        System.out.println("Valeur de r : "+rprec);
+        System.out.println("Valeur de u : "+uprec);
+        System.out.println("Valeur de v : "+vprec);
+        System.out.println("----------- i = "+0+" -----------");
 
         BigInteger r = b;
         u = BigInteger.valueOf(0);
         v = BigInteger.valueOf(1);
+        System.out.println("Valeur de r : "+r);
+        System.out.println("Valeur de u : "+u);
+        System.out.println("Valeur de v : "+v);
+        System.out.println("----------- i = "+1+" -----------");
 
         int i = 2;
 
-        while(true){
-            r = rprec.subtract(rprec.divide(r)).multiply(r);
-            u = uprec.subtract(rprec.divide(r)).multiply(u);
-            v = vprec.subtract(rprec.divide(r)).multiply(v);
+        while(i != 4){
 
-            if(rprec.equals(a.gcd(b)) && r.equals(BigInteger.valueOf(0))){
-                break;
-            }
+            r = rprec.subtract((rprec.divide(r)).multiply(r));
+            u = uprec.subtract((rprec.divide(r)).multiply(u));
+            v = vprec.subtract((rprec.divide(r)).multiply(v));
+            System.out.println("Valeur de r : "+r);
+            System.out.println("Valeur de u : "+u);
+            System.out.println("Valeur de v : "+v);
+            System.out.println("----------- i = "+i+" -----------");
+
             rprec = r;
             uprec = u;
             vprec = v;
