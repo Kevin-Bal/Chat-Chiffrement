@@ -69,7 +69,7 @@ public class ThreadClient implements Runnable {
                         msg = mon_entree.readUTF();
                     }
                 } catch(EOFException e) {
-                   // on entre dans ce catch lors de la dedonnexion : ce n'est pas une erreur
+                   // on entre dans ce catch lors de la deconnexion : ce n'est pas une erreur
                    System.out.println("Deconnexion réussi");
              	   fermeture();
                 } catch (IOException e) {
