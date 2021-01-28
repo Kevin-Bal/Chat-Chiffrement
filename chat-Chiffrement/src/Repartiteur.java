@@ -6,8 +6,8 @@ import java.util.List;
 
 public class Repartiteur extends ServerSocket {
     private final static int PORT = 12000; // Port d'écoute
-
     private List<Socket> clients = new ArrayList<>();
+    private List<ClePublique> cles = new ArrayList<>();
 
     public Repartiteur() throws IOException {
     	super(PORT);
@@ -26,7 +26,7 @@ public class Repartiteur extends ServerSocket {
             maConnexion = accept();
             clients.add(maConnexion);
 
-            new Thread(new ServiceClient(maConnexion, clients)).start();
+            new Thread(new ServiceClient(maConnexion, clients, cles)).start();
             System.out.println("[Serveur] En attente de connexion");
         }
     }
@@ -44,5 +44,4 @@ public class Repartiteur extends ServerSocket {
 			e.printStackTrace();
 		}
     }
-
 }
