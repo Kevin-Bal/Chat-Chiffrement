@@ -57,13 +57,16 @@ public class ThreadClient implements Runnable {
             String msg;
             @Override
             public void run() {
+                //Envoi de la clé publique au serveur
                 Gson gson = new Gson();
                 String jsonClePublique = gson.toJson(maClePublique);
                 ma_sortie.println(jsonClePublique);
 
+                // Boucle principale //
                 while(!FIN_CLIENT.equals(msg)){
                     msg = saisieMessage();
 
+                    //Envoi de message aux autres clients
                     if(!msg.startsWith("/")) {
                         //CHIFFREMENT DE LA DONNEE et envoi au autres clients (via le serveur)
                         for (ClePublique cle: cles) {
@@ -71,6 +74,7 @@ public class ThreadClient implements Runnable {
                             ma_sortie.println(rsa.chiffrement("[" + maClePublique.getId() + "] " + msg,cle));
                         }
                     }
+                    //Envoi de commande au serveur
                     else{
                         ma_sortie.println(msg);
                     }

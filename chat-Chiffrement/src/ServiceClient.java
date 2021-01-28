@@ -45,20 +45,6 @@ public class ServiceClient implements Runnable {
     }
 
     /**
-     * Méthode de gestion de déconnexion du client
-     */
-    private void terminer(){
-        try{
-            if (ma_connexion != null) {
-                ma_connexion.close();
-            }
-        }
-        catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
      * Méthode de gestion de la réception et de l'envoie des messages
      */
     public void run(){
@@ -118,26 +104,6 @@ public class ServiceClient implements Runnable {
 		}
     }
 
-    private void orderClientsToDeletePKey(String id) throws IOException {
-        notifyAllClientWithoutCypher(MOT_DE_PASSE+"-delete");
-        notifyAllClientWithoutCypher(id);
-    }
-
-
-    private void deletePKey(String id) {
-        int pos = -1;
-        for (int i=0; i<cles.size();++i) {
-            if(cles.get(i).getId() == id){
-                pos = i;
-            }
-        }
-
-        if(pos != -1){
-            cles.remove(pos);
-            clients.remove(pos);
-        }
-    }
-
     /**
      * Méthode qui se charge d'ajouter un nouveau client à sa liste et d'envoyer sa clé publique aux anciens clients
      * @param newCP
@@ -169,6 +135,43 @@ public class ServiceClient implements Runnable {
 
     }
 
+    //###########################################################################################################################################
+    //              DECONNEXION CLIENT
+    private void orderClientsToDeletePKey(String id) throws IOException {
+        notifyAllClientWithoutCypher(MOT_DE_PASSE+"-delete");
+        notifyAllClientWithoutCypher(id);
+    }
+
+    private void deletePKey(String id) {
+        int pos = -1;
+        for (int i=0; i<cles.size();++i) {
+            if(cles.get(i).getId() == id){
+                pos = i;
+            }
+        }
+
+        if(pos != -1){
+            cles.remove(pos);
+            clients.remove(pos);
+        }
+    }
+
+    /**
+     * Méthode de gestion de déconnexion du client
+     */
+    private void terminer(){
+        try{
+            if (ma_connexion != null) {
+                ma_connexion.close();
+            }
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    //###########################################################################################################################################
+    //              NOTIFY
     /**
      * Méthode qui se charge de notifier tous les clients présent dans le serveur.
      * POUR LES MESSAGES SERVEUR (Connexion,Deco...)
@@ -205,11 +208,10 @@ public class ServiceClient implements Runnable {
         }
     }
 
-
     /**
      * Méthode qui se charge de notifier tous les clients présent dans le serveur
      * POUR ENVOYER UN MESSAGE A UNE PERSONNE (transmettre un message d'un client à un autre)
-     * @param msg
+     * @param msg id
      */
     public void notifyOneClient(String msg, String id) {
         try {
