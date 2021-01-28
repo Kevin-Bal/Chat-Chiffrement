@@ -99,6 +99,8 @@ public class ServiceClient implements Runnable {
 	                    notifyAllClient("[serveur > You] " + newCP.getId() + " vient de se déconnecter");
 	                    System.out.println("[Serveur] Deconnexion de " + newCP.getId() + "!\n");
 	                    this.ma_sortie.writeUTF("Deconnexion en cours ...");
+	                    orderClientsToDeletePKey(newCP.getId());
+	                    deletePKey(newCP.getId());
 	                    terminer();
 	                    break;
 	                default :
@@ -110,6 +112,24 @@ public class ServiceClient implements Runnable {
 			System.out.println("problème\n"+e);
 			terminer();
 		}
+    }
+
+    private void orderClientsToDeletePKey(String id) throws IOException {
+        notifyAllClient(MOT_DE_PASSE+"-delete");
+        notifyAllClient(id);
+    }
+
+
+    private void deletePKey(String id) {
+        int pos = -1;
+        for (int i=0; i<cles.size();++i) {
+            if(cles.get(i).getId() == id){
+                pos = i;
+            }
+        }
+
+        if(pos != -1)
+            cles.remove(pos);
     }
 
     /**
