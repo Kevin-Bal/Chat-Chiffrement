@@ -10,10 +10,10 @@ import java.util.List;
 import java.util.Scanner;
 
 public class ThreadClient implements Runnable {
-
     private int port;
     private String adressseIP;
     private String id;
+    private String MOT_DE_PASSE = "";
     
     private DataInputStream mon_entree = null;
     private PrintWriter ma_sortie = null;
