@@ -8,27 +8,31 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ServiceClient implements Runnable {
-	
+    // Constante projet :
+    private static final String HELP = "/help";
+    private static final String QUITTER = "/quit";
+    private String MOT_DE_PASSE;
+
+
     private Socket ma_connexion;
 	private BufferedReader mon_entree;
 	private DataOutputStream ma_sortie;
     private List<Socket> clients;
     private List<ClePublique> cles;
 
-    // Constante projet :
-    private static final String HELP = "/help";
-    private static final String QUITTER = "/quit";
 
     /**
      * Constructeur de la classe
      * @param la_connection
      * @param clients
      * @param cles
+     * @param MOT_DE_PASSE
      */
-    public ServiceClient(Socket la_connection, List<Socket> clients, List<ClePublique> cles){
+    public ServiceClient(Socket la_connection, List<Socket> clients, List<ClePublique> cles, String MOT_DE_PASSE){
         this.ma_connexion= la_connection;
         this.clients = clients;
         this.cles = cles;
+        this.MOT_DE_PASSE = MOT_DE_PASSE;
         
         try {
 			this.mon_entree = new BufferedReader(new InputStreamReader(this.ma_connexion.getInputStream()));
@@ -70,6 +74,9 @@ public class ServiceClient implements Runnable {
             System.out.println("");
             System.out.println(newCP.getE());
             System.out.println("_____________________________________________________________________________________________________");
+
+            //Send Password to new Client
+            this.ma_sortie.writeUTF(MOT_DE_PASSE);
 
             newClientManager(newCP);
             cles.add(newCP);
@@ -118,7 +125,7 @@ public class ServiceClient implements Runnable {
 
         //Pour sécuriser l'envoi de la clé privée, on créé un mot de passe.
         //A la reception de ce mot de passe, le client sait qu'il va recevoir une nouvelle clé publique
-        notifyAllClient("motdepasse");
+        notifyAllClient(MOT_DE_PASSE);
         notifyAllClient(jsonClePubliqueArrivant);
 
 
@@ -127,7 +134,7 @@ public class ServiceClient implements Runnable {
             this.ma_sortie.writeUTF("[serveur > You] Bienvenue dans le chat " + newCP.getId());
             for (ClePublique cle:cles) {
                 String jsonClePubliqueAncien = gson.toJson(cle);
-                this.ma_sortie.writeUTF("motdepasse");
+                this.ma_sortie.writeUTF(MOT_DE_PASSE);
                 this.ma_sortie.writeUTF(jsonClePubliqueAncien);
             }
         } catch (IOException e) {
