@@ -19,7 +19,6 @@ public class ClePrive {
      * Intégration de l'algorithme d'Euclide étendu
      */
     public void euclideEtendu(BigInteger a, BigInteger b){
-        System.out.println("Euclide étendu :  a = "+a+" b = "+b);
 
         BigInteger r1 = a;
         BigInteger r2 = b;
@@ -50,22 +49,19 @@ public class ClePrive {
             u2 = u3.subtract(q.multiply(u2));
             v2 = v3.subtract(q.multiply(v2));
 
-            /*if(BigInteger.ZERO.min(u2).equals(u2) || m.max(u2).equals(u2)){
-                System.out.println("Calcul du k pour changer u ");
-                BigInteger k = BigInteger.valueOf(-1);
-                u2 = u2.subtract(k.multiply(m));
-                while(BigInteger.valueOf(0).min(u2).equals(u2) || m.max(u2).equals(u2)){
-                    k = k.subtract(BigInteger.ONE);
-                    u2 = u2.subtract(k.multiply(m));
-                }
-            }*/
-
-            System.out.println("r2 : " + r2);
-            System.out.println("u2 : " + u2);
-            System.out.println("v2 : " + v2);
         }
 
-        u = u2;
+        if(BigInteger.valueOf(2).min(u1).equals(u1) || m.max(u1).equals(u1)){
+            BigInteger k = BigInteger.valueOf(-1);
+            u1 = u1.subtract(k.multiply(m));
+            while(BigInteger.valueOf(2).min(u1).equals(u1) || m.max(u1).equals(u1)){
+                k = k.subtract(BigInteger.ONE);
+                u1 = u1.subtract(k.multiply(m));
+            }
+            u = u1;
+        } else {
+            u = u1;
+        }
 
     }
 

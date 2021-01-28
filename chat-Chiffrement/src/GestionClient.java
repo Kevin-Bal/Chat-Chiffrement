@@ -11,10 +11,10 @@ public class GestionClient {
     public static void main(String[] args) throws IOException {
 
     	ClePublique cp = new ClePublique();
-        //ClePrive clePrive = new ClePrive(cp.getE(), cp.getM(), cp.getN());
+        ClePrive clePrive = new ClePrive(cp.getE(), cp.getM(), cp.getN());
 
-        System.out.println("Cle publique : "+cp.clePublique()[0]+"    "+cp.clePublique()[1]);
-        //System.out.println(clePrive.getU());
+        System.out.println("Cle publique : "+cp.clePublique()[0]+"    "+cp.clePublique()[1]+"\n\n");
+        System.out.println("Cle privé : u : "+clePrive.getU()+"\n n : "+clePrive.getE());
         
         System.out.println();
         System.out.println();
