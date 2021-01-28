@@ -5,13 +5,13 @@ import java.util.List;
 
 
 public class Repartiteur extends ServerSocket {
-    private final static int PORT = 12000; // Port d'écoute
+
     private List<Socket> clients = new ArrayList<>();
     private List<ClePublique> cles = new ArrayList<>();
 
-    public Repartiteur() throws IOException {
-    	super(PORT);
-        System.out.println("[Serveur] Serveur Chatroom chiffrée lancée sur " + PORT);
+    public Repartiteur(int port) throws IOException {
+        super(port);
+        System.out.println("[Serveur] Serveur Chatroom chiffrée lancée sur " + port);
     }
 
     /**
@@ -37,11 +37,23 @@ public class Repartiteur extends ServerSocket {
      * @throws IOException
      */
     public static void main(String[] args) throws IOException {
-        Repartiteur connexionManager = new Repartiteur();
-        try {
-        	connexionManager.execute();
-	    } catch (IOException e) {
-			e.printStackTrace();
-		}
+        if (args.length == 1) {
+            int port = 0;
+            try {
+                port = Integer.parseInt(args[0]);
+            } catch(NumberFormatException e) {
+                System.out.println("Le port doit être un entier strictement positif\n");
+                System.exit(-1);
+            }
+
+            Repartiteur connexionManager = new Repartiteur(port);
+            try {
+                connexionManager.execute();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } else {
+            System.out.println("syntaxe d’appel : java Repartiteur port\n");
+        }
     }
 }
