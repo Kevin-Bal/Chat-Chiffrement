@@ -1,5 +1,4 @@
 import java.io.IOException;
-import java.math.BigInteger;
 
 public class GestionClient {
 
@@ -19,9 +18,9 @@ public class GestionClient {
         System.out.println();
         System.out.println();
 
-        Chiffrement ch = new Chiffrement();
-        System.out.println(ch.chiffrementRSA("Bonjour !", cp));
-    	
+        CryptographieRSA rsa = new CryptographieRSA();
+        System.out.println("Chiifrement / Dechiffrement RSA : " + rsa.dechiffrement(rsa.chiffrement("Bonjour Kevinoulle et Etienouille !!?", cp), clePrive));
+
         if (args.length == 1) {
               String monId = String.format( args[0]);
               ThreadClient client = new ThreadClient(monId);

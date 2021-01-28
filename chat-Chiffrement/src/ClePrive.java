@@ -98,4 +98,8 @@ public class ClePrive {
     public void setV(BigInteger v) {
         this.v = v;
     }
+
+    public BigInteger getN() {
+        return n;
+    }
 }
