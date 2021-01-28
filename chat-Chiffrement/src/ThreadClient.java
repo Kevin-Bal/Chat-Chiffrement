@@ -96,7 +96,6 @@ public class ThreadClient implements Runnable {
                             cles.add(newCP);
 
                             //TEST
-
                             System.out.println("_____________________________________________________________________________________________________");
                             System.out.println("[Serveur] Cle publique reçu de "+ cles.get(cles.size()-1).getId() +" : ");
                             System.out.println("");
@@ -106,6 +105,12 @@ public class ThreadClient implements Runnable {
                             System.out.println("_____________________________________________________________________________________________________");
 
 
+                            msg = mon_entree.readUTF();
+                        }
+                        //RECEPTION D'UNE DEMANDE DE SUPPRESSION DE CLE
+                        else if(msg.equals(MOT_DE_PASSE+"-delete")){
+                            msg = mon_entree.readUTF();
+                            deletePKey(msg);
                             msg = mon_entree.readUTF();
                         }
                         //RECEPTION D'UN MESSAGE TRADITIONNEL
@@ -158,5 +163,19 @@ public class ThreadClient implements Runnable {
 			e.printStackTrace();
 		}
 	}
+
+    /**
+     * Méthode qui supprime une clé du tableau de clés
+     */
+    private void deletePKey(String id) {
+        int pos = -1;
+        for (int i=0; i<cles.size();++i) {
+            if(cles.get(i).getId().equals(id)){
+                pos = i;
+            }
+        }
+        if(pos != -1)
+            cles.remove(pos);
+    }
 }
 
