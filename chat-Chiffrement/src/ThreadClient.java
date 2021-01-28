@@ -10,10 +10,9 @@ import java.util.List;
 import java.util.Scanner;
 
 public class ThreadClient implements Runnable {
-    private static final int PORT = 12000;
-    private static final String IP_SERVER = "127.0.0.1";
-    private String MOT_DE_PASSE = "";
-    
+
+    private int port;
+    private String adressseIP;
     private String id;
     
     private DataInputStream mon_entree = null;
@@ -28,14 +27,16 @@ public class ThreadClient implements Runnable {
     private static final String FIN_CONNECTION = "Fermeture de la connexion";
     private static final String FIN_CLIENT = "end";
 
-    public ThreadClient(String monId) throws IOException {
+    public ThreadClient(String adresseIP, int port, String monId) throws IOException {
+        this.adressseIP = adresseIP;
+        this.port = port;
         this.id = monId;
 
         //CREATION DE LA CLE PUBLIQUE
         maClePublique = new ClePublique(this.id);
 
         try {
-            la_connexion = new Socket(IP_SERVER, PORT);
+            la_connexion = new Socket(this.adressseIP, this.port);
             mon_entree = new DataInputStream(la_connexion.getInputStream());
             ma_sortie = new PrintWriter(la_connexion.getOutputStream(), true);
         } catch (IOException e) {
