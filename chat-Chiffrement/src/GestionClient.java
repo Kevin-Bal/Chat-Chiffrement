@@ -12,7 +12,8 @@ public class GestionClient {
               String adresseIP = args[0];
               int port = Integer.parseInt(args[1]);
               String monId = String.format(args[2]);
-          
+
+              /*
               ClePublique cp = new ClePublique(monId);
               ClePrive clePrive = new ClePrive(cp.getE(), cp.getM(), cp.getN());
 
@@ -23,6 +24,7 @@ public class GestionClient {
 
               CryptographieRSA rsa = new CryptographieRSA();
               System.out.println("Chiffrement/Dechiffrement RSA : " + rsa.dechiffrement(rsa.chiffrement("Bonjour Kevinoulle et Etienouille !!?", cp), clePrive));
+              */
 
               ThreadClient client = new ThreadClient(adresseIP, port, monId);
               Thread t = new Thread(client);

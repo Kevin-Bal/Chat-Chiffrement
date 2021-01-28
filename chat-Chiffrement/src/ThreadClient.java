@@ -10,10 +10,10 @@ import java.util.List;
 import java.util.Scanner;
 
 public class ThreadClient implements Runnable {
-
     private int port;
     private String adressseIP;
     private String id;
+    private String MOT_DE_PASSE = "";
     
     private DataInputStream mon_entree = null;
     private PrintWriter ma_sortie = null;
@@ -78,10 +78,14 @@ public class ThreadClient implements Runnable {
             @Override
             public void run() {
             	try {
+            	    //receive password
+                    msg = mon_entree.readUTF();
+                    MOT_DE_PASSE = msg;
+
                     msg = mon_entree.readUTF();
                     while(!FIN_CONNECTION.equals(msg)){
                         //NOUVEAU CLIENT CONNECTE : RECEPTION DE SA CLE
-                        if(msg.contains("motdepasse")) {
+                        if(msg.equals(MOT_DE_PASSE)) {
                             msg = mon_entree.readUTF();
 
                             //Creation de la clé publique
@@ -92,7 +96,7 @@ public class ThreadClient implements Runnable {
                             cles.add(newCP);
 
                             //TEST
-                            /*
+
                             System.out.println("_____________________________________________________________________________________________________");
                             System.out.println("[Serveur] Cle publique reçu de "+ cles.get(cles.size()-1).getId() +" : ");
                             System.out.println("");
@@ -100,7 +104,7 @@ public class ThreadClient implements Runnable {
                             System.out.println("");
                             System.out.println(cles.get(cles.size()-1).getE());
                             System.out.println("_____________________________________________________________________________________________________");
-                            */
+
 
                             msg = mon_entree.readUTF();
                         }
