@@ -19,15 +19,17 @@ public class GestionClient {
         System.out.println();
 
         CryptographieRSA rsa = new CryptographieRSA();
-        System.out.println("Chiifrement / Dechiffrement RSA : " + rsa.dechiffrement(rsa.chiffrement("Bonjour Kevinoulle et Etienouille !!?", cp), clePrive));
+        System.out.println("Chiffrement/Dechiffrement RSA : " + rsa.dechiffrement(rsa.chiffrement("Bonjour Kevinoulle et Etienouille !!?", cp), clePrive));
 
-        if (args.length == 1) {
-              String monId = String.format( args[0]);
-              ThreadClient client = new ThreadClient(monId);
+        if (args.length == 3) {
+              String adresseIP = args[0];
+              int port = Integer.parseInt(args[1]);
+              String monId = String.format(args[2]);
+              ThreadClient client = new ThreadClient(adresseIP, port, monId);
               Thread t = new Thread(client);
-          t.start();
+              t.start();
         } else {
-          System.out.println("syntaxe d’appel : java GestionClient nom_du_client\n");
+          System.out.println("syntaxe d’appel : java GestionClient adresse_serveur port_serveur nom_du_client\n");
         }
     }
 
