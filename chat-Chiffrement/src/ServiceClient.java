@@ -19,6 +19,7 @@ public class ServiceClient implements Runnable {
 	private DataOutputStream ma_sortie;
     private List<Socket> clients;
     private List<ClePublique> cles;
+    private CryptographieRSA rsa;
 
 
     /**
@@ -33,6 +34,7 @@ public class ServiceClient implements Runnable {
         this.clients = clients;
         this.cles = cles;
         this.MOT_DE_PASSE = MOT_DE_PASSE;
+        rsa = new CryptographieRSA();
         
         try {
 			this.mon_entree = new BufferedReader(new InputStreamReader(this.ma_connexion.getInputStream()));
@@ -76,7 +78,7 @@ public class ServiceClient implements Runnable {
             System.out.println("_____________________________________________________________________________________________________");
 
             //Send Password to new Client
-            this.ma_sortie.writeUTF(MOT_DE_PASSE);
+            this.ma_sortie.writeUTF(rsa.chiffrement(MOT_DE_PASSE,newCP));
 
             newClientManager(newCP);
             cles.add(newCP);
@@ -86,22 +88,24 @@ public class ServiceClient implements Runnable {
 	
 	            message_lu = this.mon_entree.readLine();
 	            if(!message_lu.startsWith("/")) {
-	            	notifyAllClient("[" + newCP.getId() + "] " + message_lu);
+                    String idToSendTo = message_lu;
+                    message_lu = this.mon_entree.readLine();
+                    notifyOneClient(message_lu,idToSendTo);
 	            }
 	            
 	            switch(message_lu){
 	                case HELP :
-	                	this.ma_sortie.writeUTF("--> Wiki des commandes :");
-	                	this.ma_sortie.writeUTF("--> "+QUITTER+" : permet de vous déconnecter du serveur.");
+                        this.ma_sortie.writeUTF(rsa.chiffrement("--> Wiki des commandes :",newCP));
+                        this.ma_sortie.writeUTF(rsa.chiffrement("--> "+QUITTER+" : permet de vous déconnecter du serveur.",newCP));
 	                    break;
 	
 	                case QUITTER :
 	                    notifyAllClient("[serveur > You] " + newCP.getId() + " vient de se déconnecter");
 	                    System.out.println("[Serveur] Deconnexion de " + newCP.getId() + "!\n");
-	                    this.ma_sortie.writeUTF("Deconnexion en cours ...");
+                        this.ma_sortie.writeUTF(rsa.chiffrement("Deconnexion en cours ...",newCP));
 	                    orderClientsToDeletePKey(newCP.getId());
-	                    deletePKey(newCP.getId());
 	                    terminer();
+                        deletePKey(newCP.getId());
 	                    break;
 	                default :
 	                    break;
@@ -115,8 +119,8 @@ public class ServiceClient implements Runnable {
     }
 
     private void orderClientsToDeletePKey(String id) throws IOException {
-        notifyAllClient(MOT_DE_PASSE+"-delete");
-        notifyAllClient(id);
+        notifyAllClientWithoutCypher(MOT_DE_PASSE+"-delete");
+        notifyAllClientWithoutCypher(id);
     }
 
 
@@ -128,8 +132,10 @@ public class ServiceClient implements Runnable {
             }
         }
 
-        if(pos != -1)
+        if(pos != -1){
             cles.remove(pos);
+            clients.remove(pos);
+        }
     }
 
     /**
@@ -145,13 +151,13 @@ public class ServiceClient implements Runnable {
 
         //Pour sécuriser l'envoi de la clé privée, on créé un mot de passe.
         //A la reception de ce mot de passe, le client sait qu'il va recevoir une nouvelle clé publique
-        notifyAllClient(MOT_DE_PASSE);
-        notifyAllClient(jsonClePubliqueArrivant);
+        notifyAllClientWithoutCypher(MOT_DE_PASSE);
+        notifyAllClientWithoutCypher(jsonClePubliqueArrivant);
 
 
         // Message de bienvenu pour le client courant + Envoi des clés des anciens clients au nouveau
         try {
-            this.ma_sortie.writeUTF("[serveur > You] Bienvenue dans le chat " + newCP.getId());
+            this.ma_sortie.writeUTF(rsa.chiffrement("[serveur > You] Bienvenue dans le chat " + newCP.getId(),newCP));
             for (ClePublique cle:cles) {
                 String jsonClePubliqueAncien = gson.toJson(cle);
                 this.ma_sortie.writeUTF(MOT_DE_PASSE);
@@ -164,15 +170,16 @@ public class ServiceClient implements Runnable {
     }
 
     /**
-     * Méthode qui se charge de notifier tous les clients présent dans le serveur
+     * Méthode qui se charge de notifier tous les clients présent dans le serveur.
+     * POUR LES MESSAGES SERVEUR (Connexion,Deco...)
      * @param msg
      */
     public void notifyAllClient(String msg) {
         try {
-            for (Socket client : clients ) {
-	            if(client != ma_connexion && !client.isClosed()) {
-	            	DataOutputStream sortieSocket = new DataOutputStream(client.getOutputStream());
-					sortieSocket.writeUTF(msg);
+            for ( int i=0; i<clients.size();++i ) {
+	            if(clients.get(i) != ma_connexion && !clients.get(i).isClosed()) {
+	            	DataOutputStream sortieSocket = new DataOutputStream(clients.get(i).getOutputStream());
+					sortieSocket.writeUTF(rsa.chiffrement(msg,cles.get(i)));
 	            }
             }
         } catch (IOException e) {
@@ -180,4 +187,40 @@ public class ServiceClient implements Runnable {
         }
     }
 
+    /**
+     * Méthode qui se charge de notifier tous les clients présent dans le serveur
+     * POUR L'ENVOI DE CLE OU DE COMMANDES AU CLIENT (demander au client de créé une clé publique ou de la supprimer)
+     * @param msg
+     */
+    public void notifyAllClientWithoutCypher(String msg) {
+        try {
+            for ( int i=0; i<clients.size();++i ) {
+                if(clients.get(i) != ma_connexion && !clients.get(i).isClosed()) {
+                    DataOutputStream sortieSocket = new DataOutputStream(clients.get(i).getOutputStream());
+                    sortieSocket.writeUTF(msg);
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    /**
+     * Méthode qui se charge de notifier tous les clients présent dans le serveur
+     * POUR ENVOYER UN MESSAGE A UNE PERSONNE (transmettre un message d'un client à un autre)
+     * @param msg
+     */
+    public void notifyOneClient(String msg, String id) {
+        try {
+            for ( int i=0; i<clients.size();++i) {
+                if(clients.get(i) != ma_connexion && !clients.get(i).isClosed() & cles.get(i).getId().equals(id)) {
+                    DataOutputStream sortieSocket = new DataOutputStream(clients.get(i).getOutputStream());
+                    sortieSocket.writeUTF(msg);
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }

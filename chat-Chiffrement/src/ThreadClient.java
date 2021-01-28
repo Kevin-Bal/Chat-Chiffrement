@@ -21,7 +21,9 @@ public class ThreadClient implements Runnable {
     private Scanner scanner = new Scanner(System.in);
     //CLES
     private ClePublique maClePublique;
+    private ClePrive maClePrive;
     private List<ClePublique> cles = new ArrayList<>();
+    private CryptographieRSA rsa;
 
     
     private static final String FIN_CONNECTION = "Fermeture de la connexion";
@@ -32,8 +34,10 @@ public class ThreadClient implements Runnable {
         this.port = port;
         this.id = monId;
 
-        //CREATION DE LA CLE PUBLIQUE
+        //CREATION DES CLES ET CHIFFREMENT
         maClePublique = new ClePublique(this.id);
+        maClePrive = new ClePrive(maClePublique.getE(), maClePublique.getM(), maClePublique.getN());
+        rsa = new CryptographieRSA();
 
         try {
             la_connexion = new Socket(this.adressseIP, this.port);
@@ -59,7 +63,18 @@ public class ThreadClient implements Runnable {
 
                 while(!FIN_CLIENT.equals(msg)){
                     msg = saisieMessage();
-                    ma_sortie.println(msg);
+
+                    if(!msg.startsWith("/")) {
+                        //CHIFFREMENT DE LA DONNEE et envoi au autres clients (via le serveur)
+                        for (ClePublique cle: cles) {
+                            ma_sortie.println(cle.getId());
+                            ma_sortie.println(rsa.chiffrement("[" + maClePublique.getId() + "] " + msg,cle));
+                        }
+                    }
+                    else{
+                        ma_sortie.println(msg);
+                    }
+
                     ma_sortie.flush();
                 }
                 
@@ -80,7 +95,7 @@ public class ThreadClient implements Runnable {
             	try {
             	    //receive password
                     msg = mon_entree.readUTF();
-                    MOT_DE_PASSE = msg;
+                    MOT_DE_PASSE = rsa.dechiffrement(msg, maClePrive);
 
                     msg = mon_entree.readUTF();
                     while(!FIN_CONNECTION.equals(msg)){
@@ -96,6 +111,7 @@ public class ThreadClient implements Runnable {
                             cles.add(newCP);
 
                             //TEST
+                            /*
                             System.out.println("_____________________________________________________________________________________________________");
                             System.out.println("[Serveur] Cle publique reçu de "+ cles.get(cles.size()-1).getId() +" : ");
                             System.out.println("");
@@ -103,7 +119,7 @@ public class ThreadClient implements Runnable {
                             System.out.println("");
                             System.out.println(cles.get(cles.size()-1).getE());
                             System.out.println("_____________________________________________________________________________________________________");
-
+                            */
 
                             msg = mon_entree.readUTF();
                         }
@@ -115,7 +131,8 @@ public class ThreadClient implements Runnable {
                         }
                         //RECEPTION D'UN MESSAGE TRADITIONNEL
                         else{
-                            System.out.println(msg);
+                            //Déchiffrement
+                            System.out.println(rsa.dechiffrement(msg, maClePrive));
                             msg = mon_entree.readUTF();
                         }
                     }
