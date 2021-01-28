@@ -1,5 +1,4 @@
 import java.io.IOException;
-import java.math.BigInteger;
 
 public class GestionClient {
 
@@ -9,16 +8,18 @@ public class GestionClient {
      * @throws IOException
      */
     public static void main(String[] args) throws IOException {
-        //ClePrive clePrive = new ClePrive(cp.getE(), cp.getM(), cp.getN());
-        //System.out.println(clePrive.getU());
+
+    	ClePublique cp = new ClePublique();
+        ClePrive clePrive = new ClePrive(cp.getE(), cp.getM(), cp.getN());
+
+        System.out.println("Cle publique : "+cp.clePublique()[0]+"    "+cp.clePublique()[1]+"\n\n");
+        System.out.println("Cle privé : u : "+clePrive.getU()+"\n n : "+clePrive.getE());
         
         System.out.println();
         System.out.println();
 
-        /*
-        Chiffrement ch = new Chiffrement();
-        System.out.println(ch.chiffrementRSA("Bonjour !", cp));
-    	*/
+        CryptographieRSA rsa = new CryptographieRSA();
+        System.out.println("Chiifrement / Dechiffrement RSA : " + rsa.dechiffrement(rsa.chiffrement("Bonjour Kevinoulle et Etienouille !!?", cp), clePrive));
 
         if (args.length == 1) {
               String monId = String.format( args[0]);
