@@ -77,18 +77,24 @@ public class ServiceClient implements Runnable {
                     String idToSendTo = message_lu;
                     message_lu = this.mon_entree.readLine();
                     notifyOneClient(message_lu,idToSendTo);
+                    message_lu = this.mon_entree.readLine();
+                    notifyOneClient(message_lu,idToSendTo);
 	            }
 	            
 	            switch(message_lu){
 	                case HELP :
                         this.ma_sortie.writeUTF(rsa.chiffrement("--> Wiki des commandes :",newCP));
+                        this.ma_sortie.writeUTF(rsa.chiffrement("Serveur",newCP));
                         this.ma_sortie.writeUTF(rsa.chiffrement("--> "+QUITTER+" : permet de vous déconnecter du serveur.",newCP));
+                        this.ma_sortie.writeUTF(rsa.chiffrement("Serveur",newCP));
 	                    break;
 	
 	                case QUITTER :
 	                    notifyAllClient("[serveur > You] " + newCP.getId() + " vient de se déconnecter");
+                        notifyAllClient("Serveur");
 	                    System.out.println("[Serveur] Deconnexion de " + newCP.getId() + "!\n");
                         this.ma_sortie.writeUTF(rsa.chiffrement("Deconnexion en cours ...",newCP));
+                        this.ma_sortie.writeUTF(rsa.chiffrement("Serveur",newCP));
 	                    orderClientsToDeletePKey(newCP.getId());
 	                    terminer();
                         deletePKey(newCP.getId());
@@ -113,6 +119,7 @@ public class ServiceClient implements Runnable {
 
         // On notifie tout les clients de l'arrivée d'une nouvelle personne + Envoi de la clé publique du nouvel arrivant aux autres clients
         notifyAllClient("[serveur > You] " + newCP.getId() + " vient d'entrer dans la chatroom.");
+        notifyAllClient("Serveur");
         String jsonClePubliqueArrivant = gson.toJson(newCP);
 
         //Pour sécuriser l'envoi de la clé privée, on créé un mot de passe.
@@ -124,6 +131,7 @@ public class ServiceClient implements Runnable {
         // Message de bienvenu pour le client courant + Envoi des clés des anciens clients au nouveau
         try {
             this.ma_sortie.writeUTF(rsa.chiffrement("[serveur > You] Bienvenue dans le chat " + newCP.getId(),newCP));
+            this.ma_sortie.writeUTF(rsa.chiffrement("Serveur",newCP));
             for (ClePublique cle:cles) {
                 String jsonClePubliqueAncien = gson.toJson(cle);
                 this.ma_sortie.writeUTF(MOT_DE_PASSE);

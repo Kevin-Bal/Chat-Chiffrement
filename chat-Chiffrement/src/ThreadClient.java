@@ -25,6 +25,7 @@ public class ThreadClient implements Runnable {
     private List<ClePublique> cles = new ArrayList<>();
     private CryptographieRSA rsa;
 
+    private String lastMessageSent;
     
     private static final String FIN_CONNECTION = "Fermeture de la connexion";
     private static final String FIN_CLIENT = "end";
@@ -68,10 +69,12 @@ public class ThreadClient implements Runnable {
 
                     //Envoi de message aux autres clients
                     if(!msg.startsWith("/")) {
+                        lastMessageSent = "[" + maClePublique.getId() + "] " + msg;
                         //CHIFFREMENT DE LA DONNEE et envoi au autres clients (via le serveur)
                         for (ClePublique cle: cles) {
                             ma_sortie.println(cle.getId());
                             ma_sortie.println(rsa.chiffrement("[" + maClePublique.getId() + "] " + msg,cle));
+                            ma_sortie.println(rsa.chiffrement(maClePublique.getId(),cle));
                         }
                     }
                     //Envoi de commande au serveur
@@ -136,7 +139,40 @@ public class ThreadClient implements Runnable {
                         //RECEPTION D'UN MESSAGE TRADITIONNEL
                         else{
                             //Déchiffrement
-                            System.out.println(rsa.dechiffrement(msg, maClePrive));
+                            String messageReceived = rsa.dechiffrement(msg, maClePrive);
+                            msg = mon_entree.readUTF();
+                            String from = rsa.dechiffrement(msg, maClePrive);
+
+
+                            //Double Handshake
+                            if(from.equals("ok") || from.equals("Serveur")){
+                                System.out.println(messageReceived);
+                            }
+                            if(messageReceived.startsWith("doubleHandshake-")){
+                                if(lastMessageSent.equals(messageReceived.split("doubleHandshake-")[1])){
+                                    for (ClePublique cle: cles) {
+                                        if(from.equals(cle.getId())){
+                                            ma_sortie.println(cle.getId());
+                                            ma_sortie.println(rsa.chiffrement(lastMessageSent,cle));
+                                            ma_sortie.println(rsa.chiffrement("ok",cle));
+                                        }
+                                    }
+                                }
+                                else{
+                                    System.out.println("ERROR : double handshake false : "+lastMessageSent+"      "+messageReceived.split("doubleHandshake-")[1]);
+                                }
+                            }
+                            else{
+                                for (ClePublique cle: cles) {
+                                    if(from.equals(cle.getId())){
+                                        ma_sortie.println(cle.getId());
+                                        ma_sortie.println(rsa.chiffrement("doubleHandshake-"+messageReceived,cle));
+                                        ma_sortie.println(rsa.chiffrement(maClePublique.getId(),cle));
+                                    }
+                                }
+                            }
+
+
                             msg = mon_entree.readUTF();
                         }
                     }
