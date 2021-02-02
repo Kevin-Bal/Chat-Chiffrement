@@ -5,11 +5,8 @@ import org.passay.PasswordGenerator;
 
 import java.net.*;
 import java.io.*;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.List;
-import java.util.Scanner;
 
 
 public class Repartiteur extends ServerSocket {
@@ -86,14 +83,6 @@ public class Repartiteur extends ServerSocket {
                 System.exit(-1);
             }
 
-//            String adresseIPPublic = "";
-//            try {
-//                adresseIPPublic = findIP("http://www.monip.org/","<BR>IP : ","<br>");
-//                System.out.println(adresseIPPublic);
-//            } catch (Exception e) {
-//                e.printStackTrace();
-//            };
-
             Repartiteur connexionManager = new Repartiteur(port);
             try {
                 connexionManager.execute();
@@ -103,24 +92,5 @@ public class Repartiteur extends ServerSocket {
         } else {
             System.out.println("syntaxe d’appel : java Repartiteur port\n");
         }
-    }
-
-    public static String findIP(String site, String prefixe, String suffixe) throws Exception {
-        Scanner sc = new Scanner(new URL(site).openStream());
-        while (sc.hasNextLine()) {
-            String line = sc.nextLine();
-
-            int a = line.indexOf(prefixe);
-            if (a!=-1) {
-                int b = line.indexOf(suffixe,a);
-                if (b!=-1) {
-                    sc.close();
-                    return line.substring(a+prefixe.length(),b);
-                }
-            }
-        }
-
-        sc.close();
-        return null;
     }
 }

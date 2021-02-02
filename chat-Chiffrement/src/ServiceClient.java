@@ -1,10 +1,8 @@
 /* On  importe les  classes  Reseau, Entrees Sorties, Utilitaires */
 import com.google.gson.Gson;
 
-import java.math.BigInteger;
 import java.net.*;
 import java.io.*;
-import java.util.ArrayList;
 import java.util.List;
 
 public class ServiceClient implements Runnable {

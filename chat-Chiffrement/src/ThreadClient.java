@@ -26,6 +26,7 @@ public class ThreadClient implements Runnable {
     private CryptographieRSA rsa;
 
     private String lastMessageSent;
+    private String lastMessageReceived;
     
     private static final String FIN_CONNECTION = "Fermeture de la connexion";
     private static final String FIN_CLIENT = "end";
@@ -145,16 +146,23 @@ public class ThreadClient implements Runnable {
 
 
                             //Double Handshake
-                            if(from.equals("ok") || from.equals("Serveur")){
+                            if(from.equals("ok")){
+                                System.out.println("######### TEST ######### OK");
+                                System.out.println(lastMessageReceived);
+                                System.out.println();
+                            }
+                            else if(from.equals("Serveur")){
                                 System.out.println(messageReceived);
                             }
-                            if(messageReceived.startsWith("doubleHandshake-")){
+                            else if(messageReceived.startsWith("doubleHandshake-")){
                                 if(lastMessageSent.equals(messageReceived.split("doubleHandshake-")[1])){
                                     for (ClePublique cle: cles) {
                                         if(from.equals(cle.getId())){
                                             ma_sortie.println(cle.getId());
                                             ma_sortie.println(rsa.chiffrement(lastMessageSent,cle));
                                             ma_sortie.println(rsa.chiffrement("ok",cle));
+
+                                            System.out.println("######### TEST ######### Ce message n'a pas été modifié par un tiers : "+ from +" peut l'afficher");
                                         }
                                     }
                                 }
@@ -168,6 +176,8 @@ public class ThreadClient implements Runnable {
                                         ma_sortie.println(cle.getId());
                                         ma_sortie.println(rsa.chiffrement("doubleHandshake-"+messageReceived,cle));
                                         ma_sortie.println(rsa.chiffrement(maClePublique.getId(),cle));
+                                        lastMessageReceived = messageReceived;
+                                        System.out.println("######### TEST ######### Message reçu de "+ from + " : Demande de vérification en double poignée de main");
                                     }
                                 }
                             }
